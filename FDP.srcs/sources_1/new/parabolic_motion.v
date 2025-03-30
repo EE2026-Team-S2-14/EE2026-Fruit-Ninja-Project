@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 03/18/2025 06:49:41 PM
+// Create Date: 03/16/2025 02:49:16 PM
 // Design Name: 
 // Module Name: parabolic_motion
 // Project Name: 
@@ -20,26 +20,32 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module parabolic_motion( input clk_15Hz, input btn, input [6:0] x_coordinate, input [6:0] y_coordinate, 
+
+module parabolic_motion( input basys_clock, input clk_15Hz, input btnC, input [6:0] x_coordinate, input [6:0] y_coordinate, 
 output reg [15:0] oled_data);
 
+    wire [7:0] rand_num;
+    random_number_generator r1 (.basys_clock(basys_clock), .out(rand_num));
+
     reg [6:0] x = 10; 
-    reg [6:0] y = 10; 
+    reg [6:0] y = 63; 
     reg [6:0] t = 0;  
-    reg signed [6:0] vx = 4;  // Horizontal velocity
+    reg signed [6:0] vx = 1;  // Horizontal velocity
     reg signed [6:0] vy = 10;  // Initial vertical velocity
     reg signed [6:0] g = 1;   // Gravity
+    reg [6:0] random_x_position = 10;
 
     always @(posedge clk_15Hz) begin
-        if (btn) begin
-            x <= 10;
-            y <= 10;
+        if (btnC) begin
+            random_x_position <= (rand_num % 56) + 20;
+            vx <= (rand_num % 4) - 2;
+            y <= 64;
             t <= 0;
         end 
-        else if (y < 63) begin
+        else if (y > 0 && y < 65) begin
             t <= t + 1; 
-            x <= 10 + (vx * t);
-            y <= 10 + (vy * t) - ((g * t * t) >> 1);
+            x <= random_x_position + (vx * t);
+            y <= 64 - ((vy * t) - ((g * t * t) >> 1));
         end
     end
 
