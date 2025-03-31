@@ -21,7 +21,7 @@
 
 
 
-module parabolic_motion( input basys_clock, input clk_15Hz, input btnC, input [6:0] x_coordinate, input [6:0] y_coordinate, 
+module parabolic_motion( input basys_clock, input collision_flag, input clk_15Hz, input btnC, input [6:0] x_coordinate, input [6:0] y_coordinate, 
 output reg [15:0] oled_data);
 
     wire [7:0] rand_num;
@@ -50,9 +50,12 @@ output reg [15:0] oled_data);
     end
 
     always @(*) begin
-        if (x_coordinate >= x && x_coordinate < x + 3 &&
-            y_coordinate >= y && y_coordinate < y + 3) begin
-            oled_data = 16'b11111_000000_00000; 
+//        if (collision_flag == 1) begin
+//            oled_data <= 16'b00000_000000_00000;
+//        end else
+        if (x_coordinate >= x && x_coordinate < x + 15 &&
+            y_coordinate >= y && y_coordinate < y + 15 && (collision_flag != 1)) begin
+            oled_data = 16'b11111_111000_00000; 
         end 
         else begin
             oled_data = 16'b00000_000000_00000;
